@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import GameControls from './GameControls';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -11,6 +12,17 @@ interface MainLayoutProps {
 export default function MainLayout({ children }: MainLayoutProps) {
   const params = useParams();
   const gameId = params.gameId as string;
+  const [isGameStarted, setIsGameStarted] = useState(false);
+
+  const handleStartGame = () => {
+    setIsGameStarted(true);
+    // TODO: Implement actual game start logic
+  };
+
+  const handleAdvanceTurn = () => {
+    // TODO: Implement turn advancement logic
+    console.log('Advancing turn...');
+  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -38,10 +50,15 @@ export default function MainLayout({ children }: MainLayoutProps) {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 overflow-hidden">
-        <main className="h-full overflow-y-auto p-6">
+      <div className="flex-1 overflow-hidden flex flex-col">
+        <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>
+        <GameControls
+          isGameStarted={isGameStarted}
+          onStartGame={handleStartGame}
+          onAdvanceTurn={handleAdvanceTurn}
+        />
       </div>
     </div>
   );

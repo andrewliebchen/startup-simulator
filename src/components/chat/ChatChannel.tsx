@@ -24,12 +24,7 @@ export default function ChatChannel({ channel, messages }: ChatChannelProps) {
         </div>
       </div>
 
-      {/* Turn control */}
-      <div className="border-t p-4">
-        <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
-          Advance Turn
-        </button>
-      </div>
+      
     </div>
   );
 } 
