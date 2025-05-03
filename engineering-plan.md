@@ -28,7 +28,11 @@
   - [x] #product
   - [x] #random
 - [x] Set up message thread components
-- [ ] Create strategy document editor
+- [x] Create strategy document editor
+  - [x] Implement rich text editor with TipTap
+  - [x] Add formatting toolbar
+  - [x] Create save/load functionality
+  - [x] Add unsaved changes indicator
 - [x] Add turn control UI
 
 ### 4. API Routes
@@ -47,23 +51,46 @@
 - [x] Set up basic logging and error handling
 
 ## Phase 2: Core Game Mechanics
-- [ ] Implement turn-based system
-- [ ] Add employee persona system
-- [ ] Create basic AI interaction system
-- [ ] Implement strategy document functionality
-- [ ] Add hiring system
+- [x] Implement turn-based system
+- [x] Add employee persona system
+- [x] Create basic AI interaction system
+- [x] Implement strategy document functionality
+- [x] Add hiring system
+- [ ] Enhance hiring system with:
+  - [ ] Trait customization
+  - [ ] Random appearance generation
+  - [ ] Proper onboarding flow
+- [ ] Implement message batching system
+  - [ ] Single OpenAI call per turn
+  - [ ] Realistic message timing
+  - [ ] Typing indicators
+- [ ] Add message interaction features
+  - [ ] Message highlighting
+  - [ ] Pinning functionality
+  - [ ] Reaction system
 
 ## Phase 3: AI Integration
-- [ ] Set up OpenAI integration
-- [ ] Implement message generation system
-- [ ] Create employee response logic
-- [ ] Add personality trait influence system
+- [x] Set up OpenAI integration
+- [x] Implement message generation system
+- [x] Create employee response logic
+- [x] Add personality trait influence system
+- [ ] Enhance employee personas
+  - [ ] Add hidden agendas/goals
+  - [ ] Implement private message channels
+  - [ ] Strengthen personality trait influence
+  - [ ] Add emotional dynamics system
 
 ## Phase 4: Enhanced Features
 - [ ] Add lurker mode
 - [ ] Implement reactions and pins
 - [ ] Add employee management system
+  - [ ] Performance tracking
+  - [ ] Morale system
+  - [ ] Promotion/demotion mechanics
 - [ ] Create metrics dashboard
+  - [ ] Game performance metrics
+  - [ ] Player engagement stats
+  - [ ] AI response quality metrics
 
 ## Phase 5: Polish & Optimization
 - [ ] Add animations and transitions
@@ -71,8 +98,16 @@
 - [ ] Add loading states and indicators
 - [ ] Performance optimization
 - [ ] Add analytics
+- [ ] Implement game balancing system
+- [ ] Add tutorial system
 
 ## Notes
 - All phases are subject to change based on development progress and feedback
 - Each phase should be tested and reviewed before moving to the next
-- Focus on maintaining a working product throughout development 
+- Focus on maintaining a working product throughout development
+- Priority order for next steps:
+  1. Complete core game loop (message batching, timing, interactions)
+  2. Enhance employee system (personas, private messages, agendas)
+  3. Improve hiring system (traits, appearance, onboarding)
+  4. Set up deployment pipeline
+  5. Implement lurker mode 
