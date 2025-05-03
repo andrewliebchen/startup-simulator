@@ -7,6 +7,7 @@ interface GameControlsProps {
   onStartGame: () => void;
   onAdvanceTurn: () => void;
   autoTurnInterval?: number; // in seconds
+  isLoading?: boolean;
 }
 
 export default function GameControls({
@@ -14,6 +15,7 @@ export default function GameControls({
   onStartGame,
   onAdvanceTurn,
   autoTurnInterval = 60, // default 60 seconds
+  isLoading = false,
 }: GameControlsProps) {
   const [isLurkerMode, setIsLurkerMode] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -48,12 +50,23 @@ export default function GameControls({
           {!isGameStarted ? (
             <button
               onClick={onStartGame}
-              className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md transition-colors"
+              disabled={isLoading}
+              className={`px-4 py-2 rounded-md transition-colors ${
+                isLoading
+                  ? 'bg-gray-600 cursor-not-allowed'
+                  : 'bg-green-600 hover:bg-green-700'
+              }`}
             >
-              Start Game
+              {isLoading ? 'Starting...' : 'Start Game'}
             </button>
           ) : (
             <>
+              <button
+                onClick={onAdvanceTurn}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
+              >
+                Advance Turn
+              </button>
               <button
                 onClick={() => setIsPaused(!isPaused)}
                 className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-md transition-colors"

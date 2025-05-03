@@ -23,8 +23,6 @@ export default function ChatChannel({ channel, messages }: ChatChannelProps) {
           ))}
         </div>
       </div>
-
-      
     </div>
   );
 } 

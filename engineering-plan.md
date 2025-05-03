@@ -23,6 +23,10 @@
 - [x] Create layout components
   - [x] Sidebar
   - [x] Main content area
+  - [x] Game controls footer
+    - [x] Start game button
+    - [x] Turn controls (advance, pause, timer)
+    - [x] Lurker mode toggle
 - [x] Implement channel structure
   - [x] #general
   - [x] #product
