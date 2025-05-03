@@ -1,86 +1,62 @@
+'use client';
+
+import { useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Placeholder from '@tiptap/extension-placeholder';
-import { Document } from '@/lib/types';
-import { useState, useEffect } from 'react';
-import EditorToolbar from './EditorToolbar';
 
 interface StrategyEditorProps {
-  gameId: string;
   initialContent?: string;
   onSave: (content: string) => Promise<void>;
-  isSaving: boolean;
 }
 
-export default function StrategyEditor({
-  gameId,
-  initialContent = '',
-  onSave,
-  isSaving,
-}: StrategyEditorProps) {
-  const [isDirty, setIsDirty] = useState(false);
+export default function StrategyEditor({ initialContent = '', onSave }: StrategyEditorProps) {
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSavedContent, setLastSavedContent] = useState(initialContent);
 
   const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Placeholder.configure({
-        placeholder: 'Write your company strategy here...',
-      }),
-    ],
+    extensions: [StarterKit],
     content: initialContent,
-    onUpdate: () => {
-      setIsDirty(true);
+    onUpdate: ({ editor }) => {
+      const content = editor.getHTML();
+      if (content !== lastSavedContent) {
+        // Content has changed
+      }
     },
   });
 
-  useEffect(() => {
-    if (editor && initialContent !== editor.getHTML()) {
-      editor.commands.setContent(initialContent);
-      setIsDirty(false);
-    }
-  }, [initialContent, editor]);
-
   const handleSave = async () => {
-    if (!editor || !isDirty) return;
+    if (!editor) return;
     
+    setIsSaving(true);
     try {
-      await onSave(editor.getHTML());
-      setIsDirty(false);
+      const content = editor.getHTML();
+      await onSave(content);
+      setLastSavedContent(content);
     } catch (error) {
-      console.error('Failed to save strategy:', error);
+      console.error('Failed to save:', error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between p-4 border-b">
-        <h2 className="text-lg font-semibold">Company Strategy</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold">Strategy Document</h2>
         <button
           onClick={handleSave}
-          disabled={!isDirty || isSaving}
-          className={`px-4 py-2 rounded ${
-            isDirty && !isSaving
-              ? 'bg-blue-500 hover:bg-blue-600 text-white'
-              : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+          disabled={isSaving}
+          className={`px-4 py-2 rounded-md ${
+            isSaving
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-600 hover:bg-blue-700 text-white'
           }`}
         >
           {isSaving ? 'Saving...' : 'Save Changes'}
         </button>
       </div>
-
-      <EditorToolbar editor={editor} />
-
-      <div className="flex-1 overflow-y-auto p-4">
-        <EditorContent
-          editor={editor}
-          className="prose max-w-none min-h-[200px] p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-
-      <div className="p-4 border-t bg-gray-50">
-        <div className="text-sm text-gray-500">
-          {isDirty ? 'You have unsaved changes' : 'All changes saved'}
-        </div>
+      <div className="flex-1 overflow-auto border rounded-lg p-4 bg-white">
+        <EditorContent editor={editor} />
       </div>
     </div>
   );

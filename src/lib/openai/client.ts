@@ -1,54 +1,37 @@
 import OpenAI from 'openai';
-import { Employee, Message, Document } from '../types';
+import { Employee, Message as GameMessage } from '../types';
+
+interface ChatCompletionResponse {
+  choices: {
+    message: {
+      content: string;
+    };
+  }[];
+}
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-interface GenerateMessagesInput {
-  gameId: string;
-  employees: Employee[];
-  strategyDoc: Document | null;
-  currentTurn: number;
-  recentMessages: Message[];
-}
-
-export async function generateEmployeeMessages({
-  gameId,
-  employees,
-  strategyDoc,
-  currentTurn,
-  recentMessages,
-}: GenerateMessagesInput): Promise<Message[]> {
-  const systemPrompt = `You are simulating a startup team where each employee has a unique personality and role.
-The employees should respond based on the company's strategy document and recent conversations.
-Each message should reflect the employee's role and personality traits.
-Keep responses concise and natural, like real Slack messages.`;
+export async function generateMessages(
+  strategy: string,
+  employees: Employee[],
+  recentMessages: GameMessage[]
+): Promise<ChatCompletionResponse> {
+  const systemPrompt = `You are simulating a startup team. Each employee has a unique personality and role.
+They should respond based on the company strategy and their personality traits.
+Keep responses concise and natural, like real team chat messages.`;
 
   const userPrompt = `Strategy Document:
-${strategyDoc?.content || 'No strategy document available'}
-
-Recent Messages:
-${recentMessages.map(msg => `${msg.employeeId}: ${msg.content}`).join('\n')}
-
-Current Turn: ${currentTurn}
+${strategy}
 
 Employees:
-${employees.map(emp => 
-  `${emp.name} (${emp.role}): ${emp.traits.join(', ')}`
-).join('\n')}
+${employees.map(e => `${e.name} (${e.role}): ${e.traits.join(', ')}`).join('\n')}
 
-Generate messages for each employee in the following JSON format:
-{
-  "messages": [
-    {
-      "employeeId": "employee_id",
-      "channel": "channel_name",
-      "content": "message content",
-      "isPrivate": boolean
-    }
-  ]
-}`;
+Recent Messages:
+${recentMessages.map(m => `${m.content}`).join('\n')}
+
+Generate responses from each employee in the appropriate channels.`;
 
   const completion = await openai.chat.completions.create({
     model: "gpt-4",
@@ -56,18 +39,8 @@ Generate messages for each employee in the following JSON format:
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt }
     ],
-    response_format: { type: "json_object" },
     temperature: 0.7,
   });
 
-  const response = JSON.parse(completion.choices[0].message.content);
-  return response.messages.map((msg: any) => ({
-    id: crypto.randomUUID(),
-    employeeId: msg.employeeId,
-    channel: msg.channel,
-    content: msg.content,
-    private: msg.isPrivate,
-    turnNumber: currentTurn,
-    createdAt: new Date(),
-  }));
+  return completion as unknown as ChatCompletionResponse;
 } 

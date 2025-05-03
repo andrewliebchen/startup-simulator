@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
-import { createMessage, getMessages } from '@/lib/db/client';
+import { createMessage } from '@/lib/db/client';
+import { sql } from '@vercel/postgres';
 
 export async function POST(
   request: Request,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   { params }: { params: { gameId: string } }
 ) {
   try {
@@ -39,7 +41,7 @@ export async function GET(
   try {
     const { searchParams } = new URL(request.url);
     const channel = searchParams.get('channel');
-    const turnNumber = searchParams.get('turnNumber');
+    const gameId = params.gameId;
 
     if (!channel) {
       return NextResponse.json(
@@ -48,12 +50,14 @@ export async function GET(
       );
     }
 
-    const messages = await getMessages(
-      params.gameId,
-      channel,
-      turnNumber ? parseInt(turnNumber) : undefined
-    );
-    return NextResponse.json(messages);
+    const { rows } = await sql`
+      SELECT * FROM messages 
+      WHERE game_id = ${gameId} 
+      AND channel = ${channel}
+      ORDER BY created_at ASC
+    `;
+
+    return NextResponse.json(rows);
   } catch (error) {
     console.error('Error fetching messages:', error);
     return NextResponse.json(
